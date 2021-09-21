@@ -54,7 +54,8 @@ defmodule Surface.Catalogue.MixProject do
       {:surface, "~> 0.5.0"},
       {:earmark, "~> 1.3"},
       {:ex_doc, ">= 0.19.0", only: :docs},
-      {:makeup_elixir, "~> 0.15.1"}
+      {:makeup_elixir, "~> 0.15.1"},
+      {:phoenix_live_view, "~> 0.16.3", override: true}
     ]
   end
 

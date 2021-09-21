@@ -1,21 +1,35 @@
 defmodule Surface.Catalogue.Router do
   defmacro surface_catalogue(path, opts \\ []) do
     quote bind_quoted: binding() do
+      pipeline :catalogue_layout do
+        plug :put_root_layout, {Surface.Catalogue.LayoutView, :root}
+      end
+
+      pipeline :no_layout do
+        plug :put_root_layout, false
+      end
+
       scope path, alias: false, as: false do
-        import Phoenix.LiveView.Router, only: [live: 3]
+        pipe_through [:catalogue_layout]
+
+        import Phoenix.LiveView.Router, only: [live: 2]
 
         alias Surface.Catalogue.{
-          LayoutView,
           PageLive,
           ExampleLive,
           PlaygroundLive
         }
 
-        live "/", PageLive, layout: {LayoutView, :root}
-        live "/components/:component/", PageLive, layout: {LayoutView, :root}
-        live "/components/:component/:action", PageLive, layout: {LayoutView, :root}
-        live "/examples/:example", ExampleLive, layout: false
-        live "/playgrounds/:playground", PlaygroundLive, layout: false
+        live "/", PageLive
+        live "/components/:component/", PageLive
+        live "/components/:component/:action", PageLive
+
+        scope "/", root_layout: false do
+          pipe_through [:no_layout]
+
+          live "/examples/:example", ExampleLive
+          live "/playgrounds/:playground", PlaygroundLive
+        end
       end
     end
   end
